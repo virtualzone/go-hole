@@ -1,0 +1,16 @@
+name: Run Tests
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+
+  container-job:
+    runs-on: ubuntu-latest
+    container: golang:1.19-alpine
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run tests
+      working-directory: .
+      run: go test -cover -v
+      env:
+        CGO_ENABLED: 0

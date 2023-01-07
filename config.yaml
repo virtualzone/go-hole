@@ -1,0 +1,11 @@
+listen: 0.0.0.0:53
+upstream:
+  - 8.8.8.8:53
+  - 8.8.4.4:53
+blacklist:
+  - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+local:
+  - name: service1.local
+    address: 192.168.178.1
+  - name: service2.local
+    address: 192.168.178.2

@@ -10,30 +10,33 @@ import (
 func parseQuery(m *dns.Msg) {
 	for _, q := range m.Question {
 		name := strings.ToLower(q.Name)
-		log.Printf("Query for %s\n", name)
 		found := false
 		if q.Qtype == dns.TypeA {
-			log.Println("Checking local...")
 			arr, err := queryLocal(name, q.Qtype)
 			if err == nil {
 				found = true
 				m.Answer = append(m.Answer, arr...)
+				log.Printf("Query for %s resolved as local address\n", name)
 			}
 		}
 		if !found {
-			log.Println("Checking blacklist...")
 			arr, err := queryBlacklist(name, q.Qtype)
 			if err == nil {
 				found = true
 				m.Answer = append(m.Answer, arr...)
+				log.Printf("Query for %s resolved as blacklisted name\n", name)
 			}
 		}
 		if !found {
-			log.Println("Checking upstream...")
 			arr, err := queryUpstream(name, q.Qtype)
 			if err == nil {
+				found = true
 				m.Answer = append(m.Answer, arr...)
+				log.Printf("Query for %s resolved via upstream\n", name)
 			}
+		}
+		if !found {
+			log.Printf("Query for %s did not resolve\n", name)
 		}
 	}
 }

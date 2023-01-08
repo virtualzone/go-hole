@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -64,6 +63,7 @@ func (c *Config) Print() {
 	log.Println("Using config:\n" + string(s))
 }
 
+/*
 func (c *Config) getEnvInt(key string, defaultValue int) int {
 	val := c.getEnv(key, strconv.Itoa(defaultValue))
 	if i, err := strconv.Atoi(val); err != nil {
@@ -81,6 +81,7 @@ func (c *Config) getEnvBool(key string, defaultValue bool) bool {
 	val := strings.ToLower(c.getEnv(key, def))
 	return (val == "1") || (val == "true") || (val == "yes") || (val == "on")
 }
+*/
 
 func (c *Config) getEnv(key, defaultValue string) string {
 	res := os.Getenv(key)

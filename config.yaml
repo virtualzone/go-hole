@@ -11,8 +11,7 @@ blacklistResolveAddress: 0.0.0.0
 
 # One or more Blacklist sources
 blacklist:
-#  - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
-  - https://raw.githubusercontent.com/RooneyMcNibNug/pihole-stuff/master/SNAFU.txt
+  - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
 
 # Domain names to be resolved upstream, even if they are blacklisted
 whitelist:

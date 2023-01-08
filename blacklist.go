@@ -76,14 +76,34 @@ func processBlacklistSource(url string) error {
 		line := strings.TrimSpace(fileScanner.Text())
 		if line != "" && line[0] != '#' {
 			split := re.Split(line, -1)
-			if len(split) == 2 {
-				blacklistRecords = append(blacklistRecords, strings.ToLower(split[1])+".")
-			} else if len(split) == 1 {
-				blacklistRecords = append(blacklistRecords, strings.ToLower(split[0])+".")
+			if isValidBlacklistSourceRecord(split) {
+				if len(split) == 2 {
+					blacklistRecords = append(blacklistRecords, strings.ToLower(split[1])+".")
+				} else if len(split) == 1 {
+					blacklistRecords = append(blacklistRecords, strings.ToLower(split[0])+".")
+				}
 			}
 		}
 	}
 	return nil
+}
+
+func isValidBlacklistSourceRecord(split []string) bool {
+	if len(split) == 0 {
+		return false
+	}
+	if len(split) > 2 {
+		return false
+	}
+	if len(split) == 2 {
+		if split[0] != "0.0.0.0" {
+			return false
+		}
+		if split[0] == "0.0.0.0" && split[1] == "0.0.0.0" {
+			return false
+		}
+	}
+	return true
 }
 
 func getUrlData(url string) ([]byte, error) {

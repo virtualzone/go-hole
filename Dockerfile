@@ -5,7 +5,6 @@ ADD . .
 RUN echo "package main\n\nconst AppVersion = \"`cat ./VERSION | awk NF`\"" > version.go
 RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o go-hole .
 RUN apt-get update && apt-get install --yes libcap2-bin
-RUN which setcap
 
 FROM gcr.io/distroless/base-debian11
 COPY --from=builder /go/src/app/go-hole /app/

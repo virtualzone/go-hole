@@ -12,7 +12,7 @@ linux: linux_amd64 linux_arm64 linux_arm
 
 macos: macos_amd64 macos_arm64
 
-windows: windows_amd64
+windows: windows_amd64 windows_arm64
 
 linux_amd64:
 	env GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o build/go-hole_linux_amd64_${VERSION}
@@ -31,3 +31,6 @@ macos_arm64:
 
 windows_amd64:
 	env GOOS=windows GOARCH=amd64 go build -ldflags="-w -s" -o build/go-hole_windows_amd64_${VERSION}
+
+windows_arm64:
+	env GOOS=windows GOARCH=arm64 go build -ldflags="-w -s" -o build/go-hole_windows_arm64_${VERSION}

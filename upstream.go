@@ -17,10 +17,21 @@ func queryUpstream(name string, qtype uint16) ([]dns.RR, error) {
 		Qclass: dns.ClassINET,
 	}
 
-	c := new(dns.Client)
-	in, _, err := c.Exchange(m1, GetConfig().UpstreamDNS[0])
-	if err != nil {
-		return nil, errors.New("failed to query upstream DNS server: " + err.Error())
+	for _, server := range GetConfig().UpstreamDNS {
+		in, err := doUpstreamQuery(m1, server)
+		if err == nil {
+			if len(in.Answer) == 0 {
+				return nil, errors.New("record not found via upstream DNS server")
+			}
+			return in.Answer, nil
+		}
 	}
-	return in.Answer, nil
+
+	return nil, errors.New("could not resolve query via any upstream DNS server")
+}
+
+func doUpstreamQuery(m *dns.Msg, address string) (*dns.Msg, error) {
+	c := new(dns.Client)
+	in, _, err := c.Exchange(m, address)
+	return in, err
 }

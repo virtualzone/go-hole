@@ -15,19 +15,27 @@ import (
 	"github.com/miekg/dns"
 )
 
-var blacklistRecords = map[string]string{}
+var blacklistRecords = []string{}
 var whitelistRecords = []string{}
 
 func queryBlacklist(name string, qtype uint16) ([]dns.RR, error) {
 	if isWhitelisted(name) {
 		return nil, errors.New("record is whitelisted, not checking against blacklist database")
 	}
-	ip := blacklistRecords[name]
-	if ip == "" {
+	if !isBlacklisted(name) {
 		return nil, errors.New("record not found in blacklist database")
 	}
-	rr, err := dns.NewRR(fmt.Sprintf("%s A %s", name, ip))
+	rr, err := dns.NewRR(fmt.Sprintf("%s A %s", name, GetConfig().BlacklistResolveAddress))
 	return []dns.RR{rr}, err
+}
+
+func isBlacklisted(name string) bool {
+	for _, cur := range blacklistRecords {
+		if cur == name {
+			return true
+		}
+	}
+	return false
 }
 
 func isWhitelisted(name string) bool {
@@ -41,7 +49,7 @@ func isWhitelisted(name string) bool {
 
 func updateBlacklistRecords() {
 	log.Println("Updating blacklist database...")
-	blacklistRecords = make(map[string]string, 0)
+	blacklistRecords = make([]string, 0)
 	for _, url := range GetConfig().BlacklistSources {
 		processBlacklistSource(url)
 	}
@@ -69,7 +77,9 @@ func processBlacklistSource(url string) error {
 		if line != "" && line[0] != '#' {
 			split := re.Split(line, -1)
 			if len(split) == 2 {
-				blacklistRecords[strings.ToLower(split[1])+"."] = split[0]
+				blacklistRecords = append(blacklistRecords, strings.ToLower(split[1])+".")
+			} else if len(split) == 1 {
+				blacklistRecords = append(blacklistRecords, strings.ToLower(split[0])+".")
 			}
 		}
 	}

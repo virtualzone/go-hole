@@ -16,11 +16,12 @@ type ConfigLocalAddress struct {
 }
 
 type Config struct {
-	ListenAddr       string               `yaml:"listen"`
-	UpstreamDNS      []string             `yaml:"upstream"`
-	BlacklistSources []string             `yaml:"blacklist"`
-	Whitelist        []string             `yaml:"whitelist"`
-	LocalAddresses   []ConfigLocalAddress `yaml:"local"`
+	ListenAddr              string               `yaml:"listen"`
+	UpstreamDNS             []string             `yaml:"upstream"`
+	BlacklistResolveAddress string               `yaml:"blacklistResolveAddress"`
+	BlacklistSources        []string             `yaml:"blacklist"`
+	Whitelist               []string             `yaml:"whitelist"`
+	LocalAddresses          []ConfigLocalAddress `yaml:"local"`
 }
 
 var ConfigInstance *Config = &Config{}

@@ -1,9 +1,21 @@
+# DNS Server Listen Address
 listen: 0.0.0.0:53
+
+# One or more DNS Upstream Servers (default: Google DNS)
 upstream:
   - 8.8.8.8:53
   - 8.8.4.4:53
+
+# One or more Blacklist sources
 blacklist:
   - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+
+# Domain names to be resolved upstream, even if they are blacklisted
+whitelist:
+  - googleadservices.com
+  - iadsdk.apple.com
+
+# Optional names to be resolved to specific IP addresses
 local:
   - name: service1.local
     address: 192.168.178.1

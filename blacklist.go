@@ -16,8 +16,12 @@ import (
 )
 
 var blacklistRecords = map[string]string{}
+var whitelistRecords = []string{}
 
 func queryBlacklist(name string, qtype uint16) ([]dns.RR, error) {
+	if isWhitelisted(name) {
+		return nil, errors.New("record is whitelisted, not checking against blacklist database")
+	}
 	ip := blacklistRecords[name]
 	if ip == "" {
 		return nil, errors.New("record not found in blacklist database")
@@ -26,11 +30,28 @@ func queryBlacklist(name string, qtype uint16) ([]dns.RR, error) {
 	return []dns.RR{rr}, err
 }
 
+func isWhitelisted(name string) bool {
+	for _, cur := range whitelistRecords {
+		if cur == name {
+			return true
+		}
+	}
+	return false
+}
+
 func updateBlacklistRecords() {
 	log.Println("Updating blacklist database...")
 	blacklistRecords = make(map[string]string, 0)
 	for _, url := range GetConfig().BlacklistSources {
 		processBlacklistSource(url)
+	}
+}
+
+func updateWhitelistRecords() {
+	log.Println("Updating whitelist database...")
+	whitelistRecords = make([]string, 0)
+	for _, name := range GetConfig().Whitelist {
+		whitelistRecords = append(whitelistRecords, strings.ToLower(strings.TrimSpace(name))+".")
 	}
 }
 

@@ -8,5 +8,6 @@ func main() {
 	GetConfig().Print()
 	updateLocalRecords()
 	updateBlacklistRecords()
+	updateWhitelistRecords()
 	listenAndServe()
 }

@@ -2,12 +2,13 @@ package main
 
 import (
 	"log"
+	"net"
 	"strings"
 
 	"github.com/miekg/dns"
 )
 
-func parseQuery(m *dns.Msg) {
+func parseQuery(source net.Addr, m *dns.Msg) {
 	for _, q := range m.Question {
 		name := strings.ToLower(q.Name)
 		found := false
@@ -16,7 +17,7 @@ func parseQuery(m *dns.Msg) {
 			if err == nil {
 				found = true
 				m.Answer = append(m.Answer, arr...)
-				log.Printf("Query for %s resolved as local address\n", name)
+				logQueryResult(source, name, q.Qtype, "resolved as local address")
 			}
 		}
 		if !found {
@@ -24,7 +25,7 @@ func parseQuery(m *dns.Msg) {
 			if err == nil {
 				found = true
 				m.Answer = append(m.Answer, arr...)
-				log.Printf("Query for %s resolved as blacklisted name\n", name)
+				logQueryResult(source, name, q.Qtype, "resolved as blacklisted name")
 			}
 		}
 		if !found {
@@ -32,11 +33,11 @@ func parseQuery(m *dns.Msg) {
 			if err == nil {
 				found = true
 				m.Answer = append(m.Answer, arr...)
-				log.Printf("Query for %s resolved via upstream\n", name)
+				logQueryResult(source, name, q.Qtype, "resolved via upstream")
 			}
 		}
 		if !found {
-			log.Printf("Query for %s did not resolve\n", name)
+			logQueryResult(source, name, q.Qtype, "did not resolve")
 		}
 	}
 }
@@ -48,7 +49,7 @@ func handleDnsRequest(w dns.ResponseWriter, r *dns.Msg) {
 
 	switch r.Opcode {
 	case dns.OpcodeQuery:
-		parseQuery(m)
+		parseQuery(w.RemoteAddr(), m)
 	}
 
 	w.WriteMsg(m)

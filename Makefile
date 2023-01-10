@@ -30,7 +30,7 @@ macos_arm64:
 	env GOOS=darwin GOARCH=arm64 go build -ldflags="-w -s" -o build/go-hole_macos_arm64_${VERSION}
 
 windows_amd64:
-	env GOOS=windows GOARCH=amd64 go build -ldflags="-w -s" -o build/go-hole_windows_amd64_${VERSION}
+	env GOOS=windows GOARCH=amd64 go build -ldflags="-w -s" -o build/go-hole_windows_amd64_${VERSION}.exe
 
 windows_arm64:
-	env GOOS=windows GOARCH=arm64 go build -ldflags="-w -s" -o build/go-hole_windows_arm64_${VERSION}
+	env GOOS=windows GOARCH=arm64 go build -ldflags="-w -s" -o build/go-hole_windows_arm64_${VERSION}.exe

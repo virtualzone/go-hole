@@ -15,12 +15,11 @@ type ConfigLocalAddress struct {
 }
 
 type Config struct {
-	ListenAddr              string               `yaml:"listen"`
-	UpstreamDNS             []string             `yaml:"upstream"`
-	BlacklistResolveAddress string               `yaml:"blacklistResolveAddress"`
-	BlacklistSources        []string             `yaml:"blacklist"`
-	Whitelist               []string             `yaml:"whitelist"`
-	LocalAddresses          []ConfigLocalAddress `yaml:"local"`
+	ListenAddr       string               `yaml:"listen"`
+	UpstreamDNS      []string             `yaml:"upstream"`
+	BlacklistSources []string             `yaml:"blacklist"`
+	Whitelist        []string             `yaml:"whitelist"`
+	LocalAddresses   []ConfigLocalAddress `yaml:"local"`
 }
 
 var ConfigInstance *Config = &Config{}
@@ -62,26 +61,6 @@ func (c *Config) Print() {
 	s, _ := yaml.Marshal(c)
 	log.Println("Using config:\n" + string(s))
 }
-
-/*
-func (c *Config) getEnvInt(key string, defaultValue int) int {
-	val := c.getEnv(key, strconv.Itoa(defaultValue))
-	if i, err := strconv.Atoi(val); err != nil {
-		return defaultValue
-	} else {
-		return i
-	}
-}
-
-func (c *Config) getEnvBool(key string, defaultValue bool) bool {
-	def := ""
-	if defaultValue {
-		def = "1"
-	}
-	val := strings.ToLower(c.getEnv(key, def))
-	return (val == "1") || (val == "true") || (val == "yes") || (val == "on")
-}
-*/
 
 func (c *Config) getEnv(key, defaultValue string) string {
 	res := os.Getenv(key)

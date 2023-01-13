@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -25,8 +24,7 @@ func queryBlacklist(name string, qtype uint16) ([]dns.RR, error) {
 	if !isBlacklisted(name) {
 		return nil, errors.New("record not found in blacklist database")
 	}
-	rr, err := dns.NewRR(fmt.Sprintf("%s A %s", name, GetConfig().BlacklistResolveAddress))
-	return []dns.RR{rr}, err
+	return []dns.RR{}, nil
 }
 
 func isBlacklisted(name string) bool {

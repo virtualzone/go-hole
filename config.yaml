@@ -6,9 +6,6 @@ upstream:
   - 8.8.8.8:53
   - 8.8.4.4:53
 
-# The IP address blocked names will resolve to
-blacklistResolveAddress: 0.0.0.0
-
 # One or more Blacklist sources
 blacklist:
   - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts

@@ -38,10 +38,14 @@ func (c *Config) ReadConfig() {
 	if err != nil {
 		log.Fatalf("could not read config yaml from %s\n", configPath)
 	}
+	c.ReadConfigData(data)
+	c.ReadEnv()
+}
+
+func (c *Config) ReadConfigData(data []byte) {
 	if err := yaml.Unmarshal(data, &c); err != nil {
 		log.Fatalf("could not parse config yaml: %s\n", err.Error())
 	}
-	c.ReadEnv()
 }
 
 func (c *Config) ReadEnv() {

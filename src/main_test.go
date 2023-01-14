@@ -28,7 +28,6 @@ func TestMain(m *testing.M) {
 	initServer()
 	code := m.Run()
 	os.Exit(code)
-	//listenAndServe()
 }
 
 func checkTestBool(t *testing.T, expected, actual bool) {

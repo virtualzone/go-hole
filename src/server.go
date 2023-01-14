@@ -11,36 +11,32 @@ import (
 func parseQuery(source net.Addr, m *dns.Msg) {
 	for _, q := range m.Question {
 		name := strings.ToLower(q.Name)
-		processDnsQuery(name, q.Qtype, source, m)
+		res, errCode := processDnsQuery(name, q.Qtype, source)
+		m.Answer = append(m.Answer, res...)
+		m.Rcode = errCode
 	}
 }
 
-func processDnsQuery(name string, qtype uint16, source net.Addr, m *dns.Msg) {
+func processDnsQuery(name string, qtype uint16, source net.Addr) ([]dns.RR, int) {
 	if qtype == dns.TypeA {
 		arr, err := queryLocal(name, qtype)
 		if err == nil {
-			m.Answer = append(m.Answer, arr...)
-			m.Rcode = dns.RcodeSuccess
 			logQueryResult(source, name, qtype, "resolved as local address")
-			return
+			return arr, dns.RcodeSuccess
 		}
 	}
 	arr, err := queryBlacklist(name, qtype)
 	if err == nil {
-		m.Answer = append(m.Answer, arr...)
-		m.Rcode = dns.RcodeNameError
 		logQueryResult(source, name, qtype, "resolved as blacklisted name")
-		return
+		return arr, dns.RcodeNameError
 	}
 	arr, err = queryUpstream(name, qtype)
 	if err == nil {
-		m.Answer = append(m.Answer, arr...)
-		m.Rcode = dns.RcodeSuccess
 		logQueryResult(source, name, qtype, "resolved via upstream")
-		return
+		return arr, dns.RcodeSuccess
 	}
-	m.Rcode = dns.RcodeNameError
 	logQueryResult(source, name, qtype, "did not resolve")
+	return []dns.RR{}, dns.RcodeNameError
 }
 
 func handleDnsRequest(w dns.ResponseWriter, r *dns.Msg) {

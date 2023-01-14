@@ -23,3 +23,12 @@ func TestUpstreamNonExistent(t *testing.T) {
 	checkTestBool(t, false, err == nil)
 	checkTestBool(t, true, res == nil)
 }
+
+func TestUpstreamCname(t *testing.T) {
+	res, err := queryUpstream("iadsdk.apple.com.", dns.TypeCNAME)
+	checkTestBool(t, true, err == nil)
+	checkTestBool(t, false, res == nil)
+	checkTestInt(t, 1, len(res))
+	cnameRecord1 := res[0].(*dns.CNAME)
+	checkTestString(t, "iadsdk.apple.com.akadns.net.", cnameRecord1.Target)
+}

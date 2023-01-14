@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run tests
-      working-directory: .
+      working-directory: src
       run: go test -cover -v
       env:
         CGO_ENABLED: 0

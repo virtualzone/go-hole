@@ -2,8 +2,8 @@ FROM golang:1.19-bullseye AS builder
 RUN export GOBIN=$HOME/work/bin
 WORKDIR /go/src/app
 ADD . .
-RUN echo "package main\n\nconst AppVersion = \"`cat ./VERSION | awk NF`\"" > version.go
-RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o go-hole .
+RUN echo "package main\n\nconst AppVersion = \"`cat ./VERSION | awk NF`\"" > src/version.go
+RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o go-hole src/*.go
 RUN apt-get update && apt-get install --yes libcap2-bin
 
 FROM gcr.io/distroless/base-debian11

@@ -18,14 +18,12 @@ func parseQuery(source net.Addr, m *dns.Msg) {
 }
 
 func processDnsQuery(name string, qtype uint16, source net.Addr) ([]dns.RR, int) {
-	if qtype == dns.TypeA {
-		arr, err := queryLocal(name, qtype)
-		if err == nil {
-			logQueryResult(source, name, qtype, "resolved as local address")
-			return arr, dns.RcodeSuccess
-		}
+	arr, err := queryLocal(name, qtype)
+	if err == nil {
+		logQueryResult(source, name, qtype, "resolved as local address")
+		return arr, dns.RcodeSuccess
 	}
-	arr, err := queryBlacklist(name, qtype)
+	arr, err = queryBlacklist(name, qtype)
 	if err == nil {
 		logQueryResult(source, name, qtype, "resolved as blacklisted name")
 		return arr, dns.RcodeNameError

@@ -18,6 +18,14 @@ whitelist:
 # Optional names to be resolved to specific IP addresses
 local:
   - name: service1.local
-    address: 192.168.178.1
+    target:
+    - address: 192.168.178.1
+      type: A
+    - address: 192.168.179.1
+      type: A
+    - address: fe80::9656:d028:8652:1111
+      type: AAAA
   - name: service2.local
-    address: 192.168.178.2
+    target:
+    - address: 192.168.178.2
+      type: A

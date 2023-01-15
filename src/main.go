@@ -11,6 +11,7 @@ func main() {
 }
 
 func initServer() {
+	initLogging()
 	updateLocalRecords()
 	updateBlacklistRecords()
 	updateWhitelistRecords()

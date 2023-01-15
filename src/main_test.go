@@ -18,9 +18,17 @@ whitelist:
   - iadsdk.apple.com
 local:
   - name: service1.local
-    address: 192.168.178.1
+    target:
+    - address: 192.168.178.1
+      type: A
+    - address: 192.168.179.1
+      type: A
+    - address: fe80::9656:d028:8652:1111
+      type: AAAA
   - name: service2.local
-    address: 192.168.178.2
+    target:
+    - address: 192.168.178.2
+      type: A
 `
 
 func TestMain(m *testing.M) {

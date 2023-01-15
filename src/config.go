@@ -9,9 +9,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type ConfigLocalAddress struct {
-	Name    string `yaml:"name"`
+type ConfigLocalAddressTarget struct {
 	Address string `yaml:"address"`
+	Type    string `yaml:"type"`
+}
+
+type ConfigLocalAddress struct {
+	Name   string                     `yaml:"name"`
+	Target []ConfigLocalAddressTarget `yaml:"target"`
 }
 
 type Config struct {

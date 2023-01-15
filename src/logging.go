@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"net"
+	"strings"
 
 	"github.com/miekg/dns"
 )
@@ -94,12 +96,29 @@ var queryTypeNames = map[uint16]string{
 	dns.TypeReserved:   "Reserved",
 }
 
+var queryNameTypes = map[string]uint16{}
+
+func initLogging() {
+	queryNameTypes = make(map[string]uint16, 0)
+	for k, v := range queryTypeNames {
+		queryNameTypes[v] = k
+	}
+}
+
 func getQueryTypeText(qtype uint16) string {
 	res := queryTypeNames[qtype]
 	if res == "" {
 		res = "Unknown"
 	}
 	return res
+}
+
+func getQueryTypeUint(qtype string) (uint16, error) {
+	res, ok := queryNameTypes[strings.ToUpper(qtype)]
+	if !ok {
+		return 0, errors.New("query type not found")
+	}
+	return res, nil
 }
 
 func logQueryResult(source net.Addr, name string, qtype uint16, result string) {

@@ -7,12 +7,22 @@ import (
 	"github.com/miekg/dns"
 )
 
-func TestProcessDnsQueryLocal(t *testing.T) {
+func TestProcessDnsQueryLocalA(t *testing.T) {
 	res, errCode := processDnsQuery("service1.local.", dns.TypeA, &net.IPAddr{IP: []byte{127, 0, 0, 1}})
 	checkTestInt(t, dns.RcodeSuccess, errCode)
-	checkTestInt(t, 1, len(res))
+	checkTestInt(t, 2, len(res))
 	aRecord1 := res[0].(*dns.A)
-	checkTestBool(t, true, aRecord1.A.String() == "192.168.178.1")
+	aRecord2 := res[1].(*dns.A)
+	checkTestString(t, "192.168.178.1", aRecord1.A.String())
+	checkTestString(t, "192.168.179.1", aRecord2.A.String())
+}
+
+func TestProcessDnsQueryLocalAAAA(t *testing.T) {
+	res, errCode := processDnsQuery("service1.local.", dns.TypeAAAA, &net.IPAddr{IP: []byte{127, 0, 0, 1}})
+	checkTestInt(t, dns.RcodeSuccess, errCode)
+	checkTestInt(t, 1, len(res))
+	aRecord1 := res[0].(*dns.AAAA)
+	checkTestString(t, "fe80::9656:d028:8652:1111", aRecord1.AAAA.String())
 }
 
 func TestProcessDnsQueryBlacklist(t *testing.T) {

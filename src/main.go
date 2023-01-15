@@ -12,6 +12,7 @@ func main() {
 
 func initServer() {
 	initLogging()
+	GetUpstreamCache().Init()
 	updateLocalRecords()
 	updateBlacklistRecords()
 	updateWhitelistRecords()

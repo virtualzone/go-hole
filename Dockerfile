@@ -10,7 +10,7 @@ FROM gcr.io/distroless/base-debian11
 COPY --from=builder /go/src/app/go-hole /app/
 COPY --from=builder /sbin/getcap /sbin/
 COPY --from=builder /sbin/setcap /sbin/
-COPY --from=builder /lib/*-linux-gnu/libcap.so.2 /lib/
+COPY --from=builder /lib/*-linux-*/libcap.so.2 /lib/
 RUN ["/sbin/setcap", "cap_net_bind_service=+ep", "/app/go-hole"]
 ADD config.yaml /app/
 WORKDIR /app

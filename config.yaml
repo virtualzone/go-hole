@@ -10,6 +10,9 @@ upstream:
 blacklist:
   - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
 
+# Blacklist renewal interval in minutes - set to 0 to disable
+blacklistRenewal: 1440
+
 # Domain names to be resolved upstream, even if they are blacklisted
 whitelist:
   - googleadservices.com

@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/miekg/dns"
 )
@@ -47,10 +48,25 @@ func isWhitelisted(name string) bool {
 
 func updateBlacklistRecords() {
 	log.Println("Updating blacklist database...")
-	blacklistRecords = make([]string, 0)
+	list := make([]string, 0)
 	for _, url := range GetConfig().BlacklistSources {
-		processBlacklistSource(url)
+		processBlacklistSource(url, &list)
 	}
+	blacklistRecords = list
+	log.Printf("Blacklist database updated, %d records\n", len(blacklistRecords))
+}
+
+func initBlacklistRenewal() {
+	if GetConfig().BlacklistRenewal < 1 {
+		return
+	}
+	ticker := time.NewTicker(time.Minute * time.Duration(GetConfig().BlacklistRenewal))
+	go func() {
+		for {
+			<-ticker.C
+			updateBlacklistRecords()
+		}
+	}()
 }
 
 func updateWhitelistRecords() {
@@ -61,7 +77,7 @@ func updateWhitelistRecords() {
 	}
 }
 
-func processBlacklistSource(url string) error {
+func processBlacklistSource(url string, list *[]string) error {
 	data, err := getUrlData(url)
 	if err != nil {
 		return err
@@ -76,9 +92,9 @@ func processBlacklistSource(url string) error {
 			split := re.Split(line, -1)
 			if isValidBlacklistSourceRecord(split) {
 				if len(split) == 2 {
-					blacklistRecords = append(blacklistRecords, strings.ToLower(split[1])+".")
+					*list = append(*list, strings.ToLower(split[1])+".")
 				} else if len(split) == 1 {
-					blacklistRecords = append(blacklistRecords, strings.ToLower(split[0])+".")
+					*list = append(*list, strings.ToLower(split[0])+".")
 				}
 			}
 		}

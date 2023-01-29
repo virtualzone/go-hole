@@ -23,6 +23,7 @@ type Config struct {
 	ListenAddr       string               `yaml:"listen"`
 	UpstreamDNS      []string             `yaml:"upstream"`
 	BlacklistSources []string             `yaml:"blacklist"`
+	BlacklistRenewal int                  `yaml:"blacklistRenewal"`
 	Whitelist        []string             `yaml:"whitelist"`
 	LocalAddresses   []ConfigLocalAddress `yaml:"local"`
 }

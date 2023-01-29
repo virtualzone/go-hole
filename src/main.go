@@ -7,6 +7,7 @@ func main() {
 	GetConfig().ReadConfig()
 	GetConfig().Print()
 	initServer()
+	initBlacklistRenewal()
 	listenAndServe()
 }
 

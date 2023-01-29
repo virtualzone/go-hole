@@ -55,3 +55,15 @@ func TestProcessDnsQueryUpstreamNonExistent(t *testing.T) {
 	checkTestInt(t, dns.RcodeNameError, errCode)
 	checkTestInt(t, 0, len(res))
 }
+
+func TestProcessDnsQueryEmptyName(t *testing.T) {
+	res, errCode := processDnsQuery(".", dns.TypeA, &net.IPAddr{IP: []byte{127, 0, 0, 1}})
+	checkTestInt(t, dns.RcodeNameError, errCode)
+	checkTestInt(t, 0, len(res))
+}
+
+func TestProcessDnsQueryWildcard(t *testing.T) {
+	res, errCode := processDnsQuery("*.", dns.TypeA, &net.IPAddr{IP: []byte{127, 0, 0, 1}})
+	checkTestInt(t, dns.RcodeNameError, errCode)
+	checkTestInt(t, 0, len(res))
+}

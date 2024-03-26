@@ -1,4 +1,4 @@
-FROM golang:1.19-bullseye AS builder
+FROM golang:1.22-bookworm AS builder
 RUN export GOBIN=$HOME/work/bin
 WORKDIR /go/src/app
 ADD . .
@@ -6,7 +6,7 @@ RUN echo "package main\n\nconst AppVersion = \"`cat ./VERSION | awk NF`\"" > src
 RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o go-hole src/*.go
 RUN apt-get update && apt-get install --yes libcap2-bin
 
-FROM gcr.io/distroless/base-debian11
+FROM gcr.io/distroless/base-debian12
 COPY --from=builder /go/src/app/go-hole /app/
 COPY --from=builder /sbin/getcap /sbin/
 COPY --from=builder /sbin/setcap /sbin/

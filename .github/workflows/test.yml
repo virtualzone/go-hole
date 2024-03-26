@@ -10,9 +10,9 @@ jobs:
 
   container-job:
     runs-on: ubuntu-latest
-    container: golang:1.19-alpine
+    container: golang:1.22-alpine
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Run tests
       working-directory: src
       run: go test -cover -v

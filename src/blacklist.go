@@ -29,6 +29,9 @@ func queryBlacklist(name string, qtype uint16) ([]dns.RR, error) {
 }
 
 func isBlacklisted(name string) bool {
+	if GetConfig().BlacklistEverything {
+		return true
+	}
 	for _, cur := range blacklistRecords {
 		if cur == name {
 			return true

@@ -13,6 +13,9 @@ blacklist:
 # Blacklist renewal interval in minutes - set to 0 to disable
 blacklistRenewal: 1440
 
+# You can also choose to blacklist everything (only whitelist will work then)
+blacklistEverything: false
+
 # Domain names to be resolved upstream, even if they are blacklisted
 whitelist:
   - googleadservices.com

@@ -28,12 +28,40 @@ func queryBlacklist(name string, qtype uint16) ([]dns.RR, error) {
 	return []dns.RR{}, nil
 }
 
+// checks whether `nameToCheck` matches `patt`.
+// Pattern "*.example.com" allows:
+// - ✓ example.com
+// - ✓ subdoman.example.com
+// - ✓ deep.subdomain.example.com
+//
+// The star can only appear as a prefix and must be immediately followed by
+// a dot. That means the following are invalid:
+//
+// - sub*.domain.com (doesn't start with "*.")
+// - *.*.domain.com (has more than one asterisk)
+// - domain*.com (doesn't start with "*." and has asterisk in wrong place)
+func matchesWildcard(nameToCheck, patt string) bool {
+	if !strings.HasPrefix(patt, "*.") {
+		return false
+	}
+
+	wildcardDomain := patt[2:] // wildcardDomain is "example.com" when starDomain is "*.example.com"
+	return strings.HasSuffix(nameToCheck, "."+wildcardDomain) || nameToCheck == wildcardDomain
+}
+
+func validateWildcard(patt string) {
+	if strings.Contains(patt, "*") && (!strings.HasPrefix(patt, "*.") || strings.Count(patt, "*") != 1) {
+		log.Fatal("Invalid wildcard pattern: *, must appear only as prefix *.domain.com")
+	}
+}
+
 func isBlacklisted(name string) bool {
 	if GetConfig().BlacklistEverything {
 		return true
 	}
 	for _, cur := range blacklistRecords {
-		if cur == name {
+		validateWildcard(cur)
+		if matchesWildcard(name, cur) || cur == name {
 			return true
 		}
 	}
@@ -42,7 +70,8 @@ func isBlacklisted(name string) bool {
 
 func isWhitelisted(name string) bool {
 	for _, cur := range whitelistRecords {
-		if cur == name {
+		validateWildcard(cur)
+		if matchesWildcard(name, cur) || cur == name {
 			return true
 		}
 	}

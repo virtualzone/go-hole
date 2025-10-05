@@ -17,9 +17,18 @@ blacklistRenewal: 1440
 blacklistEverything: false
 
 # Domain names to be resolved upstream, even if they are blacklisted
+# Domains in blacklist and whitelist can begin with wildcard followed by star:
+# Pattern "*.example.com" allows all of the following:
+# - example.com
+# - subdoman.example.com
+# - deep.subdomain.example.com
+#
+# The star can only appear as a prefix and must be immediately followed by
+# a dot. You must use quotes in yaml to use the wildcard
 whitelist:
   - googleadservices.com
   - iadsdk.apple.com
+  - "*.google.com"
 
 # Optional names to be resolved to specific IP addresses
 local:

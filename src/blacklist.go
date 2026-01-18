@@ -78,14 +78,19 @@ func isWhitelisted(name string) bool {
 	return false
 }
 
-func updateBlacklistRecords() {
-	log.Println("Updating blacklist database...")
+func updateBlacklistRecords(name string, BlacklistSources []string) []string {
+	log.Printf("Updating %s database...\n", name)
 	list := make([]string, 0)
-	for _, url := range GetConfig().BlacklistSources {
+	for _, url := range BlacklistSources {
 		processBlacklistSource(url, &list)
 	}
-	blacklistRecords = list
-	log.Printf("Blacklist database updated, %d records\n", len(blacklistRecords))
+	log.Printf("Updated %s database, %d records\n", name, len(list))
+	return list
+}
+
+func updateBlackWhiteListRecords() {
+    blacklistRecords = updateBlacklistRecords("Blacklist", GetConfig().BlacklistSources)
+    whitelistRecords = updateBlacklistRecords("Whitelist", GetConfig().Whitelist)
 }
 
 func initBlacklistRenewal() {
@@ -96,17 +101,9 @@ func initBlacklistRenewal() {
 	go func() {
 		for {
 			<-ticker.C
-			updateBlacklistRecords()
+            updateBlackWhiteListRecords()
 		}
 	}()
-}
-
-func updateWhitelistRecords() {
-	log.Println("Updating whitelist database...")
-	whitelistRecords = make([]string, 0)
-	for _, name := range GetConfig().Whitelist {
-		whitelistRecords = append(whitelistRecords, strings.ToLower(strings.TrimSpace(name))+".")
-	}
 }
 
 func processBlacklistSource(url string, list *[]string) error {

@@ -56,7 +56,7 @@ func listenAndServe() {
 
 	server := &dns.Server{
 		Addr: GetConfig().ListenAddr,
-		Net:  "udp",
+		Net:  GetConfig().ListenProto,
 	}
 	log.Printf("Starting at %s\n", GetConfig().ListenAddr)
 	err := server.ListenAndServe()

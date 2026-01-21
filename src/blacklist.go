@@ -78,19 +78,26 @@ func isWhitelisted(name string) bool {
 	return false
 }
 
-func updateBlacklistRecords(name string, BlacklistSources []string) []string {
+func getRecordsFromSource(name string, BlacklistSources []string) []string {
 	log.Printf("Updating %s database...\n", name)
 	list := make([]string, 0)
 	for _, url := range BlacklistSources {
-		processBlacklistSource(url, &list)
+		processRecordsSource(url, &list)
 	}
 	log.Printf("Updated %s database, %d records\n", name, len(list))
 	return list
 }
 
+func appendStaticWhitelistRecords() {
+       for _, name := range GetConfig().Whitelist {
+               whitelistRecords = append(whitelistRecords, strings.ToLower(strings.TrimSpace(name))+".")
+       }
+}
+
 func updateBlackWhiteListRecords() {
-    blacklistRecords = updateBlacklistRecords("Blacklist", GetConfig().BlacklistSources)
-    whitelistRecords = updateBlacklistRecords("Whitelist", GetConfig().Whitelist)
+    blacklistRecords = getRecordsFromSource("Blacklist", GetConfig().BlacklistSources)
+    whitelistRecords = getRecordsFromSource("Whitelist", GetConfig().WhitelistSources)
+    appendStaticWhitelistRecords()
 }
 
 func initBlacklistRenewal() {
@@ -106,7 +113,7 @@ func initBlacklistRenewal() {
 	}()
 }
 
-func processBlacklistSource(url string, list *[]string) error {
+func processRecordsSource(url string, list *[]string) error {
 	data, err := getUrlData(url)
 	if err != nil {
 		return err
@@ -119,7 +126,7 @@ func processBlacklistSource(url string, list *[]string) error {
 		line := strings.TrimSpace(fileScanner.Text())
 		if line != "" && line[0] != '#' {
 			split := re.Split(line, -1)
-			if isValidBlacklistSourceRecord(split) {
+			if isValidSourceRecord(split) {
 				if len(split) == 2 {
 					*list = append(*list, strings.ToLower(split[1])+".")
 				} else if len(split) == 1 {
@@ -131,7 +138,7 @@ func processBlacklistSource(url string, list *[]string) error {
 	return nil
 }
 
-func isValidBlacklistSourceRecord(split []string) bool {
+func isValidSourceRecord(split []string) bool {
 	if len(split) == 0 {
 		return false
 	}

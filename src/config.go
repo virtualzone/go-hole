@@ -27,6 +27,7 @@ type Config struct {
 	BlacklistRenewal    int                  `yaml:"blacklistRenewal"`
 	BlacklistEverything bool                 `yaml:"blacklistEverything"`
 	Whitelist           []string             `yaml:"whitelist"`
+	WhitelistSources    []string             `yaml:"whitelistSources"`
 	LocalAddresses      []ConfigLocalAddress `yaml:"local"`
 }
 
